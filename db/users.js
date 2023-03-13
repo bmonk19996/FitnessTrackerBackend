@@ -69,6 +69,7 @@ async function getUserById(userId) {
 }
 
 async function getUserByUsername(userName) {
+
   try
   {
     const client = await pool.connect();
@@ -76,7 +77,6 @@ async function getUserByUsername(userName) {
       SELECT * FROM users
       WHERE username=${userName};
     `)
-
     if(!user)
     {
       return null;
@@ -88,8 +88,10 @@ async function getUserByUsername(userName) {
   }
   catch(e)
   {
-    throw e;
+    throw e
   }
+
+
 }
 
 module.exports = {
