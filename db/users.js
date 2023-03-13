@@ -7,14 +7,15 @@ async function createUser({ username, password }) {
   try
   {
     const client = await pool.connect();
-    const result = await client.query(`
+    const { rows: [user]} = await client.query(`
     INSERT INTO users(username, password)
     VALUES ($1, $2)
     ON CONFLICT (username) DO NOTHING
     RETURNING *;
     `, [username, password]);
     client.release();
-    return result.rows;
+    delete user.password
+    return user;
   }
   catch(e)
   {
@@ -50,7 +51,7 @@ async function getUserById(userId) {
     const client = await pool.connect();
     const {rows:[user]} = await client.query(`
       SELECT * FROM users
-      WHERE "id"=${userId};
+      WHERE id=${userId};
     `)
 
     if(!user)
@@ -83,7 +84,6 @@ async function getUserByUsername(userName) {
     }
     delete user.password;
     client.release();
-    
     return user;
   }
   catch(e)
