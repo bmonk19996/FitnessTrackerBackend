@@ -50,7 +50,7 @@ async function createTables() {
     await client.query(`
       CREATE TABLE routines (
         id SERIAL PRIMARY KEY,
-        "createId" INTEGER REFERENCES users(id),
+        "creatorId" INTEGER REFERENCES users(id),
         "isPublic" BOOLEAN DEFAULT false,
         name VARCHAR(255) UNIQUE NOT NULL,
         goal TEXT NOT NULL
@@ -247,7 +247,7 @@ async function rebuildDB() {
     await createInitialUsers()
     await createInitialActivities()
     await createInitialRoutines()
-    await createInitialRoutineActivities()
+    //await createInitialRoutineActivities()
   } catch (error) {
     console.log("Error during rebuildDB")
     throw error

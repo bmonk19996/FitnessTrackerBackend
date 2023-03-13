@@ -5,7 +5,22 @@ async function addActivityToRoutine({
   activityId,
   count,
   duration,
-}) {}
+}) {
+  try{
+    const client = await pool.connect();
+    const {rows:[routineActivity]} = await client.query(`
+      INSERT INTO routine_activities("routineId", "activityId", count, duration)
+      VALUES ($1, $2, $3, $4)
+      RETURNING *;
+    `, [routineId, activityId, count, duration]);
+    client.release();
+    return routineActivity;
+  }
+  catch(e)
+  {
+    throw e;
+  }
+}
 
 async function getRoutineActivityById(id) {
   try {

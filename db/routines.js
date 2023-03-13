@@ -1,20 +1,20 @@
 const pool = require("./client");
 const {getUserByUsername} = require('./users')
-
+const {attachActivitiesToRoutines} = require ('./activities')
 async function createRoutine({ creatorId, isPublic, name, goal }) {
   try {
     const client = await pool.connect();
-    const result = await client.query(
+    const {rows:[routine]} = await client.query(
       `
-    INSERT INTO routines(creatorId, isPublic, name, goal)
+    INSERT INTO routines("creatorId", "isPublic", name, goal)
     VALUES ($1, $2, $3, $4)
     ON CONFLICT (name) DO NOTHING
     RETURNING *;
     `,
-      [name, description]
+      [creatorId, isPublic, name, goal]
     );
     client.release();
-    return result.rows;
+    return routine;
   } catch (e) {
     throw e;
   }
@@ -56,7 +56,10 @@ async function getAllRoutines() {
     SELECT * FROM routines
     `);
     client.release();
-    return rows;
+
+    const routines = await attachActivitiesToRoutines(rows);
+
+    return routines;
   } catch (e) {
     throw e;
   }
