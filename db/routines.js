@@ -74,24 +74,26 @@ async function getAllPublicRoutines() {
     WHERE "isPublic"=true;
     `);
     client.release();
-    return rows;
+    const routines = await attachActivitiesToRoutines(rows);
+
+    return routines;
   } catch (e) {
     throw e;
   }
 }
 
 async function getAllRoutinesByUser({ username }) {
-
   try
   {
     const user = await getUserByUsername(username);
     const client = await pool.connect();
     const{rows} = await client.query(`
     SELECT * FROM routines
-    WHERE "createId"=${user.id};
+    WHERE "creatorId"=${user.id};
     `);
     client.release();
-    return rows;
+    const routines = await attachActivitiesToRoutines(rows);
+    return routines;
   }
   catch(e)
   {
@@ -104,7 +106,7 @@ async function getPublicRoutinesByUser({ username }) {
 
   try
   {
-    const routines = await getAllRoutinesByUser(username);
+    const routines = await getAllRoutinesByUser({username});
     const publicRoutines = routines.filter(routine=>routine.isPublic === true);
     return publicRoutines;
   }
@@ -119,15 +121,23 @@ async function getPublicRoutinesByActivity({ id }) {
   try
   {
     const client = await pool.connect();
-    const result = await client.query(`
+    const {rows} = await client.query(`
     SELECT * FROM routine_activities
     WHERE "activityId"=${id};
     `);
-    const routines = result.map(async (r)=>
+    console.log(rows)
+    const routines = await rows.map(async (r)=>
       {
         return await getRoutineById(r.routineId);
       });
     client.release();
+    
+
+
+
+
+
+
     return routines;
   }
   catch(e)
