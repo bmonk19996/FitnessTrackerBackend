@@ -1,4 +1,5 @@
 const pool = require("./client");
+const {getUserByUsername} = require('./users')
 
 async function createRoutine({ creatorId, isPublic, name, goal }) {
   try {
@@ -76,15 +77,104 @@ async function getAllPublicRoutines() {
   }
 }
 
-async function getAllRoutinesByUser({ username }) {}
+async function getAllRoutinesByUser({ username }) {
 
-async function getPublicRoutinesByUser({ username }) {}
+  try
+  {
+    const user = await getUserByUsername(username);
+    const client = await pool.connect();
+    const{rows} = await client.query(`
+    SELECT * FROM routines
+    WHERE "createId"=${user.id};
+    `);
+    client.release();
+    return rows;
+  }
+  catch(e)
+  {
+    throw e;
+  }
 
-async function getPublicRoutinesByActivity({ id }) {}
+}
 
-async function updateRoutine({ id, ...fields }) {}
+async function getPublicRoutinesByUser({ username }) {
 
-async function destroyRoutine(id) {}
+  try
+  {
+    const routines = await getAllRoutinesByUser(username);
+    const publicRoutines = routines.filter(routine=>routine.isPublic === true);
+    return publicRoutines;
+  }
+  catch(e)
+  {
+    throw(e);
+  }
+
+}
+
+async function getPublicRoutinesByActivity({ id }) {
+  try
+  {
+    const client = await pool.connect();
+    const result = await client.query(`
+    SELECT * FROM routineactivities
+    WHERE "activityId"=${id};
+    `);
+    const routines = result.map(async (r)=>
+      {
+        return await getRoutineById(r.routineId);
+      });
+    client.release();
+    return routines;
+  }
+  catch(e)
+  {
+    throw e;
+  }
+}
+
+async function updateRoutine({ id, ...fields }) {
+
+  try
+  {
+    const setString = Object.keys(fields).map(
+      (key, index) => `"${ key }"=$${ index + 1 }`
+    ).join(', ');
+
+    const client = await pool.connect();
+    const {rows:[routine]} = await client.query(`
+      UPDATE routines
+      SET ${setString}
+      WHERE id=${id}
+      RETURNING *;
+    `, Object.values(fields));
+    client.release();
+    return routine;
+  }
+  catch(e)
+  {
+    throw e;
+  }
+
+}
+
+async function destroyRoutine(id) {
+
+  try
+  {
+    const client = await pool.connect();
+    await client.query(`
+      DELETE FROM routines
+      WHERE id=${id};
+    `)
+    client.release();
+  }
+  catch(e)
+  {
+    throw e;
+  }
+
+}
 
 module.exports = {
   getRoutineById,
