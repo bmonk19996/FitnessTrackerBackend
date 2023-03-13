@@ -58,7 +58,7 @@ async function createTables() {
     `);
 
     await client.query(`
-    CREATE TABLE routineactivities (
+    CREATE TABLE routine_activities (
       id SERIAL PRIMARY KEY,
     "routineId" INTEGER UNIQUE REFERENCES routines(id),
     "activityId" INTEGER UNIQUE REFERENCES activities(id),

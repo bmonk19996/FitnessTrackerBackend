@@ -117,7 +117,7 @@ async function getPublicRoutinesByActivity({ id }) {
   {
     const client = await pool.connect();
     const result = await client.query(`
-    SELECT * FROM routineactivities
+    SELECT * FROM routine_activities
     WHERE "activityId"=${id};
     `);
     const routines = result.map(async (r)=>

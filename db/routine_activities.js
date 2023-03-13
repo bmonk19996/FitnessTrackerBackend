@@ -7,13 +7,76 @@ async function addActivityToRoutine({
   duration,
 }) {}
 
-async function getRoutineActivityById(id) {}
+async function getRoutineActivityById(id) {
+  try {
+    const client = await pool.connect();
+    const {
+      rows: [activity],
+    } = await client.query(`
+      SELECT * FROM routine_activies
+      WHERE "id"=${id};
+    `);
+    client.release();
+    return activity;
+  } catch (e) {
+    throw e;
+  }
+}
 
-async function getRoutineActivitiesByRoutine({ id }) {}
+async function getRoutineActivitiesByRoutine({ id }) {
+  try {
+    const client = await pool.connect();
+    const {
+      rows: [activity],
+    } = await client.query(`
+      SELECT * FROM activities
+      WHERE "routineId"=${id};
+    `);
+    client.release();
+    return activity;
+  } catch (e) {
+    throw e;
+  }
+}
 
-async function updateRoutineActivity({ id, ...fields }) {}
+async function updateRoutineActivity({ id, ...fields }) {
+  try
+  {
+    const setString = Object.keys(fields).map(
+      (key, index) => `"${ key }"=$${ index + 1 }`
+    ).join(', ');
 
-async function destroyRoutineActivity(id) {}
+    const client = await pool.connect();
+    const {rows:[routine]} = await client.query(`
+      UPDATE routine_activities
+      SET ${setString}
+      WHERE id=${id}
+      RETURNING *;
+    `, Object.values(fields));
+    client.release();
+    return routine;
+  }
+  catch(e)
+  {
+    throw e;
+  }
+}
+
+async function destroyRoutineActivity(id) {
+  try
+  {
+    const client = await pool.connect();
+    await client.query(`
+      DELETE FROM routine_activities
+      WHERE id=${id};
+    `)
+    client.release();
+  }
+  catch(e)
+  {
+    throw e;
+  }
+}
 
 async function canEditRoutineActivity(routineActivityId, userId) {}
 
