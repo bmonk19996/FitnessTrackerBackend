@@ -11,7 +11,7 @@ async function dropTables() {
     const client= await pool.connect();
 
     await client.query(`
-    DROP TABLE IF EXISTS routineactivity;
+    DROP TABLE IF EXISTS routine_activities;
     DROP TABLE IF EXISTS routines;
     DROP TABLE IF EXISTS activities;
     DROP TABLE IF EXISTS users;
@@ -60,8 +60,8 @@ async function createTables() {
     await client.query(`
     CREATE TABLE routine_activities (
       id SERIAL PRIMARY KEY,
-    "routineId" INTEGER UNIQUE REFERENCES routines(id),
-    "activityId" INTEGER UNIQUE REFERENCES activities(id),
+    "routineId" INTEGER REFERENCES routines(id),
+    "activityId" INTEGER REFERENCES activities(id),
     duration INTEGER,
     count INTEGER
     );
