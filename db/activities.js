@@ -1,4 +1,4 @@
-const client = require('./client');
+const pool = require('./client');
 
 // database functions
 async function createActivity({ name, description }) {

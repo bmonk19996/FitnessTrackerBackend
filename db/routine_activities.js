@@ -1,4 +1,4 @@
-const client = require("./client");
+const pool = require("./client");
 
 async function addActivityToRoutine({
   routineId,
