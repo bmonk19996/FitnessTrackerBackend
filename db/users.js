@@ -75,14 +75,13 @@ async function getUserByUsername(userName) {
   {
     const client = await pool.connect();
     const {rows:[user]} = await client.query(`
-      SELECT * FROM users
-      WHERE username=${userName};
-    `)
+    SELECT * FROM users
+    WHERE username=${userName};
+  `)
     if(!user)
     {
       return null;
     }
-    delete user.password;
     client.release();
     return user;
   }
