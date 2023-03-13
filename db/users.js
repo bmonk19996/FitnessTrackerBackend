@@ -29,7 +29,7 @@ async function getUser({ username, password }) {
     const client = await pool.connect();
     const{rows:[user]} = await client.query(`
     SELECT * FROM users
-    WHERE username=${username}
+    WHERE username='${username}'
     `)
     if(!user || user.password != password)
     {
@@ -76,7 +76,7 @@ async function getUserByUsername(userName) {
     const client = await pool.connect();
     const {rows:[user]} = await client.query(`
     SELECT * FROM users
-    WHERE username=${userName};
+    WHERE username='${userName}';
   `)
     if(!user)
     {
