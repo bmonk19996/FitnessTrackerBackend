@@ -72,7 +72,8 @@ async function getAllPublicRoutines() {
   try {
     const client = await pool.connect();
     const { rows } = await client.query(`
-    SELECT * FROM routines
+    SELECT routines.*, users.username AS "creatorName" FROM routines
+    join users ON routines."creatorId"=users.id
     WHERE "isPublic"=true;
     `);
     client.release();
@@ -89,7 +90,8 @@ async function getAllRoutinesByUser({ username }) {
     const user = await getUserByUsername(username);
     const client = await pool.connect();
     const { rows } = await client.query(`
-    SELECT * FROM routines
+    SELECT routines.*, users.username AS "creatorName" FROM routines
+    join users ON routines."creatorId"=users.id
     WHERE "creatorId"=${user.id};
     `);
     client.release();
@@ -116,14 +118,15 @@ async function getPublicRoutinesByActivity({ id }) {
   try {
     const client = await pool.connect();
     const { rows } = await client.query(`
-      SELECT routines.*  FROM routines
+      SELECT routines.*, users.username AS "creatorName" FROM routines
+      join users ON routines."creatorId"=users.id
       JOIN routine_activities ON routine_activities."routineId"=routines.id
       WHERE routine_activities."activityId"=${id} 
       AND routines."isPublic"=true;
     `);
 
     client.release();
-    const routines = attachActivitiesToRoutines(rows)
+    const routines = attachActivitiesToRoutines(rows);
     return routines;
   } catch (e) {
     throw e;
