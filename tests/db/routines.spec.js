@@ -160,7 +160,7 @@ describe("DB Routines", () => {
       expectRoutinesNotToContainDuplicates(routines, fakeRoutine);
     });
 
-    xit("includes username, from users join, aliased as creatorName", async () => {
+    it("includes username, from users join, aliased as creatorName", async () => {
       const routines = await getAllRoutines();
       const routine = routines.find((routine) => routine.id === fakeRoutine.id);
       expect(routine.creatorName).toEqual(fakeUser.username);

@@ -50,7 +50,7 @@ async function createTables() {
     await client.query(`
       CREATE TABLE routines (
         id SERIAL PRIMARY KEY,
-        "creatorId" INTEGER REFERENCES users(id),
+        "creatorId" INTEGER REFERENCES users(id) ON DELETE CASCADE,
         "isPublic" BOOLEAN DEFAULT false,
         name VARCHAR(255) UNIQUE NOT NULL,
         goal TEXT NOT NULL

@@ -55,7 +55,8 @@ async function getAllRoutines() {
   try {
     const client = await pool.connect();
     const { rows } = await client.query(`
-    SELECT * FROM routines
+    SELECT routines.*, users.username AS "creatorName" FROM routines
+    join users ON routines."creatorId"=users.id;
     `);
     client.release();
 
