@@ -1,10 +1,12 @@
 /* eslint-disable no-useless-catch */
 const express = require("express");
-const usersRouter = express.Router();
+const router = express.Router();
+const jwt = require("jsonwebtoken");
 const {PasswordTooShortError, UserTakenError} = require('../errors')
 
 // POST /api/users/register
-    usersRouter.post("/register", async (req, res, next) => {
+//still in progress
+    router.post("/register", async (req, res, next) => {
     const { username, password } = req.body;
     try {
         if(password.length < 8){
@@ -46,9 +48,15 @@ const {PasswordTooShortError, UserTakenError} = require('../errors')
     }
   });
 // POST /api/users/login
+router.post('/login', async (req, res) => {
 
+});
 // GET /api/users/me
+router.get('/me', async (req, res) => {
 
+});
 // GET /api/users/:username/routines
+router.get('/:username/routines', async (req, res) => {
 
-module.exports = usersRouter;
+});
+module.exports = router;
