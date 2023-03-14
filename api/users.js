@@ -3,10 +3,16 @@ const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 const {PasswordTooShortError, UserTakenError} = require('../errors')
-
+const {
+  createUser,
+  getUserByUsername,
+  getUser,
+  getUserById
+} = require("../db");
 // POST /api/users/register
 //still in progress
     router.post("/register", async (req, res, next) => {
+      //trouble getting username and password
     const { username, password } = req.body;
     try {
         if(password.length < 8){
@@ -25,13 +31,10 @@ const {PasswordTooShortError, UserTakenError} = require('../errors')
       }
       const user = await createUser({
         username,
-        password,
-        name,
-        location,
+        password
       });
       const token = jwt.sign(
         {
-          id: user.id,
           username,
         },
         process.env.JWT_SECRET,
