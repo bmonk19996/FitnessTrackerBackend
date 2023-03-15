@@ -1,6 +1,7 @@
 const pool = require("./client");
 const { getUserByUsername } = require("./users");
 const { attachActivitiesToRoutines } = require("./activities");
+
 async function createRoutine({ creatorId, isPublic, name, goal }) {
   try {
     const client = await pool.connect();
@@ -50,7 +51,7 @@ async function getRoutinesWithoutActivities() {
     throw e;
   }
 }
-//not finished
+
 async function getAllRoutines() {
   try {
     const client = await pool.connect();

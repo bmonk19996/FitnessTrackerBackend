@@ -73,10 +73,8 @@ router.patch('/:activityId', async (req, res, next) => {
             next({name:"PatchActivityError", message:ActivityExistsError(name)});
         }
         const result = await updateActivity({id, name, description});
-        console.log("RESULT: ", result)
         if(!result)
         {
-            console.log("HIT")
             next({name:"PatchActivityError", message:ActivityNotFoundError(activityId)});
             return;
         }
