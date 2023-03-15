@@ -118,8 +118,9 @@ async function getPublicRoutinesByActivity({ id }) {
   try {
     const client = await pool.connect();
     const { rows } = await client.query(`
-      SELECT routines.*, users.username AS "creatorName" FROM routines
-      join users ON routines."creatorId"=users.id
+      SELECT routines.*, users.username AS "creatorName" 
+      FROM routines
+      JOIN users ON routines."creatorId"=users.id
       JOIN routine_activities ON routine_activities."routineId"=routines.id
       WHERE routine_activities."activityId"=${id} 
       AND routines."isPublic"=true;

@@ -1,9 +1,11 @@
 require("dotenv").config()
 const express = require("express")
-var cors = require('cors')
+const cors = require('cors')
 const app = express()
 const apiRouter = require("./api");
+const morgan = require("morgan");
 
+app.use(morgan("dev"));
 app.use(cors())
 
 app.get('/products/:id', function (req, res, next) {
@@ -14,6 +16,21 @@ app.get('/products/:id', function (req, res, next) {
 //   console.log('CORS-enabled web server listening on port 3000')
 // })
 //Setup your Middleware and API Router here
+
+
+
+
+
+app.use(express.json());
+
+app.use((req, res, next) => {
+  console.log("<____Body Logger START____>");
+  console.log(req.body);
+  console.log("<_____Body Logger END_____>");
+
+  next();
+});
+
 
 app.use("/api", apiRouter);
 
