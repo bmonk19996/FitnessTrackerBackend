@@ -14,7 +14,10 @@ async function createUser({ username, password }) {
     RETURNING *;
     `, [username, password]);
     client.release();
-    delete user.password
+    if(user){
+      delete user.password
+    }
+
     return user;
   }
   catch(e)
