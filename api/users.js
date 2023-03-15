@@ -12,6 +12,7 @@ const {
   getUser,
   getUserById,
   getAllRoutinesByUser,
+  getPublicRoutinesByUser,
 } = require("../db");
 
 // POST /api/users/register
@@ -113,16 +114,18 @@ router.get("/:username/routines", async (req, res, next) => {
   {
     if(username)
     {
-      const result = await getAllRoutinesByUser({username});
-      console.log("result", result)
-      if(result)
-      {
-        res.send(result);
+      if(req.user){
+        const result = await getAllRoutinesByUser({username})
+      }else{
+        const result = await getPublicRoutinesByUser({username})
       }
-      else
+      console.log("result", result)
+      if(!result)
       {
         next({name:"GetUserRoutinesError", message:"Could not get routines for user"})
       }
+
+
     }
   }
   catch({name, message})
