@@ -1,12 +1,31 @@
 const express = require('express');
 const router = express.Router();
 
-const{getAllActivities, createActivity, updateActivity} = require("../db")
+const{getAllActivities, createActivity, updateActivity, getActivityByName, getPublicRoutinesByActivity, getRoutineActivitiesByRoutine, getActivityById} = require("../db")
 const{ActivityNotFoundError, ActivityExistsError} = require("../errors")
 
 // GET /api/activities/:activityId/routines
-router.get('/:activityId/routines', async (req, res) => {
-
+router.get('/:activityId/routines', async (req, res, next) => {
+    const {activityId:id} = req.params;
+    try
+    {
+        if(!(await getActivityById(id)))
+        {
+            next({name:"GetPublicRoutinesError", message:ActivityNotFoundError(id)});
+            return;
+        }
+        const result = await getPublicRoutinesByActivity({id});
+        if(!result)
+        {
+            next({name:"GetPublicRoutinesError", message:ActivityNotFoundError(id)});
+            return;
+        }
+        res.send(result);
+    }
+    catch({name, message})
+    {
+        next({name, message});
+    }
 });
 // GET /api/activities
 router.get('/', async (req, res, next) => {
@@ -33,6 +52,7 @@ router.post('/', async (req, res, next) => {
         if(!result)
         {
             next({name:"NewActivityError", message:ActivityExistsError(name)});
+            return;
         }
         res.send(result);
     }
@@ -45,13 +65,20 @@ router.post('/', async (req, res, next) => {
 router.patch('/:activityId', async (req, res, next) => {
     const {activityId} = req.params;
     const {name, description} = req.body;
-    console.log(activityId)
+    const id = activityId;
     try
     {
-        const result = await updateActivity(activityId, {name, description});
+        if(await getActivityByName(name))
+        {
+            next({name:"PatchActivityError", message:ActivityExistsError(name)});
+        }
+        const result = await updateActivity({id, name, description});
+        console.log("RESULT: ", result)
         if(!result)
         {
+            console.log("HIT")
             next({name:"PatchActivityError", message:ActivityNotFoundError(activityId)});
+            return;
         }
         res.send(result);
     }
