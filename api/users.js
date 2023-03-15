@@ -92,13 +92,14 @@ catch({name, message})
 }
 });
 // GET /api/users/me
-router.get("/me", async (req, res) => {
+router.get("/me", async (req, res, next) => {
   if(!req.user)
   {
-    next({name:"UnauthorizedUserError", message:UnauthorizedError})
+    res.status(401)
+    next({name:"UnauthorizedUserError", message:UnauthorizedError()})
   }
   try{
-  res.send(req.user.username);
+  res.send(req.user);
   }
   catch({name, message})
   {
