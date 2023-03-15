@@ -1,4 +1,5 @@
 /* eslint-disable no-useless-catch */
+require("dotenv").config();
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
@@ -35,23 +36,23 @@ router.post("/register", async (req, res, next) => {
       username,
       password,
     });
-    // console.log(process.env.JWT_SECRET)
-    // const token = jwt.sign(
-    //   {
-    //     username,
-    //     password
-    //   },
-    //   process.env.JWT_SECRET,
-    //   {
-    //     expiresIn: "1w",
-    //   }
-    // );
-    // console.log(token)
+    const token = jwt.sign(
+      {
+        username,
+        password
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1w",
+      }
+    );
+    console.log(token)
     res.send({
       message: "thank you for signing up",
+      token
     });
-  } catch (e) {
-    console.error('hello',e)
+  } catch ({ name, message }) {
+    next({ name, message });
   }
 });
 // POST /api/users/login
