@@ -4,13 +4,14 @@ const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 
-const { PasswordTooShortError, UserTakenError } = require("../errors");
+const { PasswordTooShortError, UserTakenError, UnauthorizedError} = require("../errors");
 
 const {
   createUser,
   getUserByUsername,
   getUser,
   getUserById,
+  getAllRoutinesByUser,
 } = require("../db");
 
 // POST /api/users/register
@@ -94,7 +95,7 @@ catch({name, message})
 router.get("/me", async (req, res) => {
   if(!req.user)
   {
-    next({name:"GetUserDataError", message:"Must be logged in to access a profile page"})
+    next({name:"UnauthorizedUserError", message:UnauthorizedError})
   }
   try{
   res.send(req.user.username);
@@ -105,10 +106,23 @@ router.get("/me", async (req, res) => {
   }
 });
 // GET /api/users/:username/routines
-router.get("/:username/routines", async (req, res) => {
+router.get("/:username/routines", async (req, res, next) => {
+  const {username} = req.params;
   try
   {
-
+    if(username)
+    {
+      const result = await getAllRoutinesByUser({username});
+      console.log("result", result)
+      if(result)
+      {
+        res.send(result);
+      }
+      else
+      {
+        next({name:"GetUserRoutinesError", message:"Could not get routines for user"})
+      }
+    }
   }
   catch({name, message})
   {

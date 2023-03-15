@@ -87,7 +87,9 @@ async function getAllPublicRoutines() {
 
 async function getAllRoutinesByUser({ username }) {
   try {
+    console.log("here")
     const user = await getUserByUsername(username);
+    console.log(user)
     const client = await pool.connect();
     const { rows } = await client.query(`
     SELECT routines.*, users.username AS "creatorName" FROM routines
@@ -96,6 +98,7 @@ async function getAllRoutinesByUser({ username }) {
     `);
     client.release();
     const routines = await attachActivitiesToRoutines(rows);
+    console.log("before return")
     return routines;
   } catch (e) {
     throw e;
