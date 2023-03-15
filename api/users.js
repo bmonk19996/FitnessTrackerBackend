@@ -41,7 +41,8 @@ router.post("/register", async (req, res, next) => {
     const token = jwt.sign(
       {
         username,
-        password
+        password,
+        id:user.id
       },
       process.env.JWT_SECRET,
       {
@@ -110,23 +111,24 @@ router.get("/me", async (req, res, next) => {
 // GET /api/users/:username/routines
 router.get("/:username/routines", async (req, res, next) => {
   const {username} = req.params;
+  console.log(req.user, "GET ROUTINES")
   try
   {
+    let result;
     if(username)
     {
-      if(req.user){
-        const result = await getAllRoutinesByUser({username})
+      if(req.user.username === username){
+        result = await getAllRoutinesByUser(req.user)
       }else{
-        const result = await getPublicRoutinesByUser({username})
+        result = await getPublicRoutinesByUser({username})
       }
       console.log("result", result)
-      if(!result)
-      {
-        next({name:"GetUserRoutinesError", message:"Could not get routines for user"})
-      }
-
-
     }
+    if(!result)
+    {
+      next({name:"GetUserRoutinesError", message:"Could not get routines for user"})
+    }
+    res.send(result);
   }
   catch({name, message})
   {
