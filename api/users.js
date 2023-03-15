@@ -46,19 +46,73 @@ router.post("/register", async (req, res, next) => {
         expiresIn: "1w",
       }
     );
-    console.log(token)
     res.send({
       message: "thank you for signing up",
-      token
+      token,
+      user
     });
   } catch ({ name, message }) {
     next({ name, message });
   }
 });
 // POST /api/users/login
-router.post("/login", async (req, res) => {});
+router.post("/login", async (req, res, next) => {
+  try{
+  const {username, password} = req.body;
+  
+
+  const user = await getUser({username, password});
+
+  if(!user)
+  {
+    next({name:"Bad Login", message:"Username or Password is incorrect"})
+  }
+
+  const token = jwt.sign(
+    {
+      username,
+      password,
+      id:user.id
+    },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: "1w",
+    }
+  );
+  res.send({
+    message: "Welcome Back",
+    token,
+    user
+  });
+}
+catch({name, message})
+{
+  next({name, message})
+}
+});
 // GET /api/users/me
-router.get("/me", async (req, res) => {});
+router.get("/me", async (req, res) => {
+  if(!req.user)
+  {
+    next({name:"GetUserDataError", message:"Must be logged in to access a profile page"})
+  }
+  try{
+  res.send(req.user.username);
+  }
+  catch({name, message})
+  {
+    next(name, message)
+  }
+});
 // GET /api/users/:username/routines
-router.get("/:username/routines", async (req, res) => {});
+router.get("/:username/routines", async (req, res) => {
+  try
+  {
+
+  }
+  catch({name, message})
+  {
+    next({name, message})
+  }
+});
 module.exports = router;
