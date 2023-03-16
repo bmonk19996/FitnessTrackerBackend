@@ -4,97 +4,89 @@ const pool = require("./client");
 
 // user functions
 async function createUser({ username, password }) {
-  try
-  {
+  try {
     const client = await pool.connect();
-    const { rows: [user]} = await client.query(`
+    const {
+      rows: [user],
+    } = await client.query(
+      `
     INSERT INTO users(username, password)
     VALUES ($1, $2)
     ON CONFLICT (username) DO NOTHING
     RETURNING *;
-    `, [username, password]);
+    `,
+      [username, password]
+    );
     client.release();
-    if(user){
+    if (user) {
       delete user.password;
-    
     }
 
     return user;
-  }
-  catch(e)
-  {
+  } catch (e) {
     throw e;
   }
 }
 
 async function getUser({ username, password }) {
-  try
-  {
+  try {
     const client = await pool.connect();
-    const{rows:[user]} = await client.query(`
+    const {
+      rows: [user],
+    } = await client.query(`
     SELECT * FROM users
     WHERE username='${username}'
-    `)
-    if(!user || user.password != password)
-    {
+    `);
+    if (!user || user.password != password) {
       return null;
     }
     delete user.password;
     client.release();
     return user;
-  }
-  catch(e)
-  {
+  } catch (e) {
     throw e;
   }
 }
 
 async function getUserById(userId) {
-  try
-  {
+  try {
     const client = await pool.connect();
-    const {rows:[user]} = await client.query(`
+    const {
+      rows: [user],
+    } = await client.query(`
       SELECT * FROM users
       WHERE id=${userId};
-    `)
+    `);
 
-    if(!user)
-    {
+    if (!user) {
       return null;
     }
     delete user.password;
-    
+
     client.release();
     return user;
-  }
-  catch(e)
-  {
+  } catch (e) {
     throw e;
   }
 }
 
 async function getUserByUsername(userName) {
-
-  try
-  {
+  try {
     const client = await pool.connect();
-    const {rows:[user]} = await client.query(`
+    const {
+      rows: [user],
+    } = await client.query(`
     SELECT * FROM users
     WHERE username='${userName}';
-  `)
-    if(!user)
-    {
+  `);
+    if (!user) {
       return null;
     }
     client.release();
     return user;
+  } catch (e) {
+    throw e;
   }
-  catch(e)
-  {
-    throw e
-  }
-
-
 }
 
 module.exports = {
@@ -102,4 +94,4 @@ module.exports = {
   getUser,
   getUserById,
   getUserByUsername,
-}
+};

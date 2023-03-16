@@ -148,7 +148,7 @@ describe("/api/routines", () => {
       expectToHaveErrorMessage(response.body, UnauthorizedError());
     });
 
-    xit("returns a 403 when a user tries to edit a routine that is not theirs", async () => {
+    it("returns a 403 when a user tries to edit a routine that is not theirs", async () => {
       const { fakeUser } = await createFakeUserWithToken("Marques");
       const { fakeUser: anotherUser, token: anotherUsersToken } =
         await createFakeUserWithToken("Mandy");

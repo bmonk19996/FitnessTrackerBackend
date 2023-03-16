@@ -4,7 +4,11 @@ const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 
-const { PasswordTooShortError, UserTakenError, UnauthorizedError} = require("../errors");
+const {
+  PasswordTooShortError,
+  UserTakenError,
+  UnauthorizedError,
+} = require("../errors");
 
 const {
   createUser,
@@ -34,15 +38,12 @@ router.post("/register", async (req, res, next) => {
         message: UserTakenError(username),
       });
     }
-    const user = await createUser({
-      username,
-      password,
-    });
+    const user = await createUser({ ...req.body });
     const token = jwt.sign(
       {
         username,
         password,
-        id:user.id
+        id: user.id,
       },
       process.env.JWT_SECRET,
       {
@@ -52,7 +53,7 @@ router.post("/register", async (req, res, next) => {
     res.send({
       message: "thank you for signing up",
       token,
-      user
+      user,
     });
   } catch ({ name, message }) {
     next({ name, message });
@@ -60,79 +61,70 @@ router.post("/register", async (req, res, next) => {
 });
 // POST /api/users/login
 router.post("/login", async (req, res, next) => {
-  try{
-  const {username, password} = req.body;
-  
+  try {
+    const { username, password } = req.body;
 
-  const user = await getUser({username, password});
+    const user = await getUser({ username, password });
 
-  if(!user)
-  {
-    next({name:"Bad Login", message:"Username or Password is incorrect"})
-  }
-
-  const token = jwt.sign(
-    {
-      username,
-      password,
-      id:user.id
-    },
-    process.env.JWT_SECRET,
-    {
-      expiresIn: "1w",
+    if (!user) {
+      next({ name: "Bad Login", message: "Username or Password is incorrect" });
     }
-  );
-  res.send({
-    message: "Welcome Back",
-    token,
-    user
-  });
-}
-catch({name, message})
-{
-  next({name, message})
-}
+
+    const token = jwt.sign(
+      {
+        username,
+        password,
+        id: user.id,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1w",
+      }
+    );
+    res.send({
+      message: "Welcome Back",
+      token,
+      user,
+    });
+  } catch ({ name, message }) {
+    next({ name, message });
+  }
 });
 // GET /api/users/me
 router.get("/me", async (req, res, next) => {
-  if(!req.user)
-  {
-    res.status(401)
-    next({name:"UnauthorizedUserError", message:UnauthorizedError()})
+  if (!req.user) {
+    res.status(401);
+    next({ name: "UnauthorizedUserError", message: UnauthorizedError() });
   }
-  try{
-  res.send(req.user);
-  }
-  catch({name, message})
-  {
-    next(name, message)
+  try {
+    res.send(req.user);
+  } catch ({ name, message }) {
+    next(name, message);
   }
 });
 // GET /api/users/:username/routines
 router.get("/:username/routines", async (req, res, next) => {
-  const {username} = req.params;
-  console.log(req.user, "GET ROUTINES")
-  try
-  {
+  const { username } = req.params;
+  console.log(req.user, "GET ROUTINES");
+  try {
     let result;
-    if(username)
-    {
-      if(req.user.username === username){
-        result = await getAllRoutinesByUser(req.user)
-      }else{
-        result = await getPublicRoutinesByUser({username})
+    if (username) {
+      if (req.user.username === username) {
+        result = await getAllRoutinesByUser(req.user);
+      } else {
+        result = await getPublicRoutinesByUser({ username });
       }
-      console.log("result", result)
+      console.log("result", result);
     }
-    if(!result)
-    {
-      next({name:"GetUserRoutinesError", message:"Could not get routines for user"})
+    if (!result) {
+      next({
+        name: "GetUserRoutinesError",
+        message: "Could not get routines for user",
+      });
     }
     res.send(result);
-  }
-  catch({name, message})
-  {
-    next({name, message})
+  } catch ({ name, message }) {
+    next({ name, message });
   }
 });
 module.exports = router;

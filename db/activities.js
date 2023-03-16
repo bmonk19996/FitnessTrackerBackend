@@ -5,7 +5,9 @@ async function createActivity({ name, description }) {
   // return the new activity
   try {
     const client = await pool.connect();
-    const {rows:[activity]} = await client.query(
+    const {
+      rows: [activity],
+    } = await client.query(
       `
     INSERT INTO activities(name, description)
     VALUES ($1, $2)
@@ -101,7 +103,6 @@ async function attachActivitiesToRoutines(routines) {
   } catch (error) {
     throw error;
   }
-
 }
 
 async function updateActivity({ id, ...fields }) {
@@ -109,26 +110,27 @@ async function updateActivity({ id, ...fields }) {
   // do update the name and description
   // return the updated activity
 
-  try
-  {
-    const setString = Object.keys(fields).map(
-      (key, index) => `"${ key }"=$${ index + 1 }`
-    ).join(', ');
+  try {
+    const setString = Object.keys(fields)
+      .map((key, index) => `"${key}"=$${index + 1}`)
+      .join(", ");
     const client = await pool.connect();
-    const {rows:[activity]} = await client.query(`
+    const {
+      rows: [activity],
+    } = await client.query(
+      `
       UPDATE activities
       set ${setString}
       WHERE id=${id}
       RETURNING *;
-    `, Object.values(fields));
+    `,
+      Object.values(fields)
+    );
     client.release();
     return activity;
-  }
-  catch(e)
-  {
+  } catch (e) {
     throw e;
   }
-
 }
 
 module.exports = {
