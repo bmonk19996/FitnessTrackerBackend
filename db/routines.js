@@ -163,11 +163,16 @@ async function updateRoutine({ id, ...fields }) {
 async function destroyRoutine(id) {
   try {
     const client = await pool.connect();
-    await client.query(`
+    const {
+      rows: [routine],
+    }  = await client.query(`
       DELETE FROM routines
-      WHERE id=${id};
+      WHERE id=${id}
+      RETURNING *;
     `);
     client.release();
+    console.log("dbtest", routine)
+    return routine
   } catch (e) {
     throw e;
   }

@@ -56,7 +56,6 @@ const routineActivitiesRouter = require("./routineActivities");
 router.use("/routine_activities", routineActivitiesRouter);
 
 router.use((error, req, res, next) => {
-  console.log(error.message);
   res.send({
     name: error.name,
     message: error.message,
