@@ -55,6 +55,13 @@ router.use("/routines", routinesRouter);
 const routineActivitiesRouter = require("./routineActivities");
 router.use("/routine_activities", routineActivitiesRouter);
 
+router.all("*",(req,res, next) =>{
+  res.status(404);
+  next({
+    name:"404",
+    message: 'unknown call',
+  })
+})
 router.use((error, req, res, next) => {
   res.send({
     name: error.name,
@@ -62,5 +69,4 @@ router.use((error, req, res, next) => {
     error: "error",
   });
 });
-
 module.exports = router;
