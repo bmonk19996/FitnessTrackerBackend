@@ -102,12 +102,12 @@ router.post("/:routineId/activities", async (req, res, next) => {
                 name: "UnauthorizedError",
                 message: DuplicateRoutineActivityError( req.body.routineId,req.body.activityId),
               });
-            return
+            return;
         }
     }
 
-    const result = await addActivityToRoutine({...req.body})
-    res.send(result)
+    const result = await addActivityToRoutine({...req.body});
+    res.send(result);
 
 
   } catch ({ name, message }) {
