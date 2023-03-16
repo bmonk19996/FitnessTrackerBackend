@@ -25,7 +25,7 @@ router.post("/register", async (req, res, next) => {
   const { username, password } = req.body;
   try {
     if (password.length < 8) {
-      next({
+     return next({
         name: "PasswordTooShortError",
         message: PasswordTooShortError(),
       });
@@ -33,7 +33,7 @@ router.post("/register", async (req, res, next) => {
     //check if user already exists
     const _user = await getUserByUsername(username);
     if (_user) {
-      next({
+     return next({
         name: "UserTakenError",
         message: UserTakenError(username),
       });
@@ -67,7 +67,7 @@ router.post("/login", async (req, res, next) => {
     const user = await getUser({ username, password });
 
     if (!user) {
-      next({ name: "Bad Login", message: "Username or Password is incorrect" });
+      return next({ name: "Bad Login", message: "Username or Password is incorrect" });
     }
 
     const token = jwt.sign(
@@ -94,7 +94,7 @@ router.post("/login", async (req, res, next) => {
 router.get("/me", async (req, res, next) => {
   if (!req.user) {
     res.status(401);
-    next({ name: "UnauthorizedUserError", message: UnauthorizedError() });
+    return next({ name: "UnauthorizedUserError", message: UnauthorizedError() });
   }
   try {
     res.send(req.user);
@@ -105,7 +105,6 @@ router.get("/me", async (req, res, next) => {
 // GET /api/users/:username/routines
 router.get("/:username/routines", async (req, res, next) => {
   const { username } = req.params;
-  console.log(req.user, "GET ROUTINES");
   try {
     let result;
     if (username) {
@@ -114,10 +113,9 @@ router.get("/:username/routines", async (req, res, next) => {
       } else {
         result = await getPublicRoutinesByUser({ username });
       }
-      console.log("result", result);
     }
     if (!result) {
-      next({
+      return next({
         name: "GetUserRoutinesError",
         message: "Could not get routines for user",
       });
