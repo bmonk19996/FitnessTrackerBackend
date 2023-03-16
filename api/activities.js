@@ -17,7 +17,7 @@ router.get("/:activityId/routines", async (req, res, next) => {
   const { activityId: id } = req.params;
   try {
     if (!(await getActivityById(id))) {
-      next({
+      return next({
         name: "GetPublicRoutinesError",
         message: ActivityNotFoundError(id),
       });
@@ -25,11 +25,10 @@ router.get("/:activityId/routines", async (req, res, next) => {
     }
     const result = await getPublicRoutinesByActivity({ id });
     if (!result) {
-      next({
+      return next({
         name: "GetPublicRoutinesError",
         message: ActivityNotFoundError(id),
       });
-      return;
     }
     res.send(result);
   } catch ({ name, message }) {
@@ -42,7 +41,7 @@ router.get("/", async (req, res, next) => {
     const result = await getAllActivities();
 
     if (!result) {
-      next({ name: "GetActivitiesError", message: ActivityNotFoundError() });
+      return next({ name: "GetActivitiesError", message: ActivityNotFoundError() });
     }
     res.send(result);
   } catch ({ name, message }) {
@@ -55,8 +54,7 @@ router.post("/", async (req, res, next) => {
   try {
     const result = await createActivity({ ...req.body });
     if (!result) {
-      next({ name: "NewActivityError", message: ActivityExistsError(name) });
-      return;
+      return next({ name: "NewActivityError", message: ActivityExistsError(name) });
     }
     res.send(result);
   } catch ({ name, message }) {
@@ -74,11 +72,10 @@ router.patch("/:activityId", async (req, res, next) => {
     }
     const result = await updateActivity({ id, ...req.body });
     if (!result) {
-      next({
+      return next({
         name: "PatchActivityError",
         message: ActivityNotFoundError(activityId),
       });
-      return;
     }
     res.send(result);
   } catch ({ name, message }) {
