@@ -92,7 +92,6 @@ async function destroyRoutineActivity(id) {
     `);
     client.release();
 
-    console.log(activity, "page");
     return activity;
   } catch (e) {
     throw e;
@@ -111,7 +110,11 @@ WHERE routine_activities.id=${routineActivityId}
 AND routines."creatorId"=${userId}
 `);
   client.release();
-  return activity;
+  if(activity){
+    return true
+  }else{
+    return false
+  }
 }
 
 module.exports = {

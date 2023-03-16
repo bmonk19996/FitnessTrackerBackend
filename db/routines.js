@@ -171,7 +171,6 @@ async function destroyRoutine(id) {
       RETURNING *;
     `);
     client.release();
-    console.log("dbtest", routine)
     return routine
   } catch (e) {
     throw e;
