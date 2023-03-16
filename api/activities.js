@@ -7,7 +7,6 @@ const {
   updateActivity,
   getActivityByName,
   getPublicRoutinesByActivity,
-  getRoutineActivitiesByRoutine,
   getActivityById,
 } = require("../db");
 const { ActivityNotFoundError, ActivityExistsError } = require("../errors");
