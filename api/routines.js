@@ -46,6 +46,13 @@ router.patch("/:routineId", async (req, res, next) => {
       return next({ name: "UnauthorizedError", message: UnauthorizedError() });
     }
     const routine = await getRoutineById(id);
+    if(!routine){
+      res.status(403)
+      return next({
+        name: "Routine not Found Error",
+        message: `Routine number ${routineId} does not exist`,
+      });
+    }
     if (routine.creatorId !== req.user.id) {
       res.status(403);
       return next({
