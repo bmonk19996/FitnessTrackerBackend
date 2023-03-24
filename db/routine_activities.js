@@ -18,7 +18,7 @@ async function addActivityToRoutine({
     `,
       [routineId, activityId, count, duration]
     );
-    client.release();
+    await client.release();
     return routineActivity;
   } catch (e) {
     throw e;
@@ -34,7 +34,7 @@ async function getRoutineActivityById(id) {
       SELECT * FROM routine_activities
       WHERE "id"=${id};
     `);
-    client.release();
+    await client.release();
     return activity;
   } catch (e) {
     throw e;
@@ -48,7 +48,7 @@ async function getRoutineActivitiesByRoutine({ id }) {
       SELECT * FROM routine_activities
       WHERE "routineId"=${id};
     `);
-    client.release();
+    await client.release();
     return rows;
   } catch (e) {
     throw e;
@@ -73,7 +73,7 @@ async function updateRoutineActivity({ id, ...fields }) {
     `,
       Object.values(fields)
     );
-    client.release();
+    await client.release();
     return routine;
   } catch (e) {
     throw e;
@@ -90,7 +90,7 @@ async function destroyRoutineActivity(id) {
       WHERE id=${id}
       RETURNING *;
     `);
-    client.release();
+    await client.release();
 
     return activity;
   } catch (e) {
@@ -109,7 +109,7 @@ JOIN routines ON routine_activities."routineId"=routines.id
 WHERE routine_activities.id=${routineActivityId}
 AND routines."creatorId"=${userId}
 `);
-  client.release();
+  await client.release();
   if(activity){
     return true
   }else{

@@ -17,7 +17,7 @@ async function createUser({ username, password }) {
     `,
       [username, password]
     );
-    client.release();
+    await client.release();
     if (user) {
       delete user.password;
     }
@@ -41,7 +41,7 @@ async function getUser({ username, password }) {
       return null;
     }
     delete user.password;
-    client.release();
+    await client.release();
     return user;
   } catch (e) {
     throw e;
@@ -63,7 +63,7 @@ async function getUserById(userId) {
     }
     delete user.password;
 
-    client.release();
+    await client.release();
     return user;
   } catch (e) {
     throw e;
@@ -82,7 +82,7 @@ async function getUserByUsername(userName) {
     if (!user) {
       return null;
     }
-    client.release();
+    await client.release();
     return user;
   } catch (e) {
     throw e;

@@ -16,7 +16,7 @@ async function createActivity({ name, description }) {
     `,
       [name, description]
     );
-    client.release();
+    await client.release();
     return activity;
   } catch (e) {
     throw e;
@@ -30,7 +30,7 @@ async function getAllActivities() {
     const { rows } = await client.query(`
     SELECT * FROM activities
     `);
-    client.release();
+    await client.release();
     return rows;
   } catch (e) {
     throw e;
@@ -46,7 +46,7 @@ async function getActivityById(id) {
       SELECT * FROM activities
       WHERE "id"=${id};
     `);
-    client.release();
+    await client.release();
     return activity;
   } catch (e) {
     throw e;
@@ -62,7 +62,7 @@ async function getActivityByName(name) {
       SELECT * FROM activities
       WHERE "name"='${name}';
     `);
-    client.release();
+    await client.release();
     return activity;
   } catch (e) {
     throw e;
@@ -98,7 +98,7 @@ async function attachActivitiesToRoutines(routines) {
       // attach the activities to each single routine
       routine.activities = activitiesToAdd;
     }
-    client.release();
+    await client.release();
     return routinesToReturn;
   } catch (error) {
     throw error;
@@ -126,7 +126,7 @@ async function updateActivity({ id, ...fields }) {
     `,
       Object.values(fields)
     );
-    client.release();
+    await client.release();
     return activity;
   } catch (e) {
     throw e;

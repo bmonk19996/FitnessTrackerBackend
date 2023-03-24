@@ -16,7 +16,7 @@ async function createRoutine({ creatorId, isPublic, name, goal }) {
     `,
       [creatorId, isPublic, name, goal]
     );
-    client.release();
+    await client.release();
     return routine;
   } catch (e) {
     throw e;
@@ -32,7 +32,7 @@ async function getRoutineById(id) {
       SELECT * FROM routines
       WHERE "id"=${id};
     `);
-    client.release();
+    await client.release();
     return activity;
   } catch (e) {
     throw e;
@@ -45,7 +45,7 @@ async function getRoutinesWithoutActivities() {
     const { rows } = await client.query(`
     SELECT * FROM routines
     `);
-    client.release();
+    await client.release();
     return rows;
   } catch (e) {
     throw e;
@@ -59,7 +59,7 @@ async function getAllRoutines() {
     SELECT routines.*, users.username AS "creatorName" FROM routines
     join users ON routines."creatorId"=users.id;
     `);
-    client.release();
+    await client.release();
 
     const routines = await attachActivitiesToRoutines(rows);
 
@@ -77,7 +77,7 @@ async function getAllPublicRoutines() {
     join users ON routines."creatorId"=users.id
     WHERE "isPublic"=true;
     `);
-    client.release();
+    await client.release();
     const routines = await attachActivitiesToRoutines(rows);
 
     return routines;
@@ -95,7 +95,7 @@ async function getAllRoutinesByUser({ username }) {
     join users ON routines."creatorId"=users.id
     WHERE "creatorId"=${user.id};
     `);
-    client.release();
+    await client.release();
     const routines = await attachActivitiesToRoutines(rows);
     return routines;
   } catch (e) {
@@ -127,7 +127,7 @@ async function getPublicRoutinesByActivity({ id }) {
       AND routines."isPublic"=true;
     `);
 
-    client.release();
+    await client.release();
     const routines = attachActivitiesToRoutines(rows);
     return routines;
   } catch (e) {
@@ -153,7 +153,7 @@ async function updateRoutine({ id, ...fields }) {
     `,
       Object.values(fields)
     );
-    client.release();
+    await client.release();
     return routine;
   } catch (e) {
     throw e;
@@ -170,7 +170,7 @@ async function destroyRoutine(id) {
       WHERE id=${id}
       RETURNING *;
     `);
-    client.release();
+    await client.release();
     return routine
   } catch (e) {
     throw e;

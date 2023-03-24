@@ -18,7 +18,7 @@ async function dropTables() {
       `);
 
     console.log("Finished dropping tables!");
-    client.release();
+    await client.release();
   } catch (error) {
     console.error("Error dropping tables!");
     throw error;
@@ -68,7 +68,7 @@ async function createTables() {
   `);
 
     console.log("Finished building tables!");
-    client.release();
+    await client.release();
   } catch (error) {
     console.error("Error building tables!");
     throw error;
